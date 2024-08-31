@@ -1,10 +1,11 @@
-void executeCMD(char *command);
-void executeCMDArgs(char *command, char **args);
-void start();
-void startbreak();
-void startstudy();
+typedef void (*Commandfunc)(double time);
 
-struct {
-  char *command;
-  void (*function)();
-} typedef CommandMap_t;
+struct CommandMap{
+    Commandfunc function;
+    double time;
+};
+void executeCMD(struct CommandMap cmd);
+struct CommandMap executeCMDArgs(int argc, char **args);
+void start(double time);
+void startbreak(double time);
+void startstudy(double time);
