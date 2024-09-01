@@ -8,14 +8,15 @@ int main(int argc, char **argv) {
     printf("Welcome to Pomodoroc!\n");
 
     //SIMULATE ARGUMENTS
-    /*
-    argv[1] = "start";
+    argv[1] = "add";
     argc++;
-    */
+    argv[2] = "myproject";
+    argc++;
 
     // Execute the command
     struct CommandMap result = executeCMDArgs(argc,argv);
-    if(result.function == NULL) return EXIT_FAILURE;
+    printf("~ parsing args completed\n");
     executeCMD(result);
+    printf("~ executeCMD completed\n");
     return EXIT_SUCCESS;
 }

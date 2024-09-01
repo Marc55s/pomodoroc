@@ -1,20 +1,29 @@
-#include "command.h"
-#include "timer.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "command.h"
+#include "save.h"
+#include "timer.h"
 
 void executeCMD(struct CommandMap cmd) {
-    cmd.function(cmd.time);
+    if(cmd.function != NULL){
+        cmd.function(cmd.time);
+    }else{
+        cmd.bifunction(cmd.param,cmd.time);
+    }
 }
 
 struct CommandMap executeCMDArgs(int argc, char **argv) {
-    printf("parsing args...\n");
-    printf("argc = %d ", argc);
+    printf("~ parsing args...\n");
+    printf("~ argc = %d\n", argc);
     for (int i = 1; i < argc; i++) {
-        printf("argv[%d] = %s\n", i, argv[i]);
+        printf("~ argv[%d] = %s\n", i, argv[i]);
     }
     struct CommandMap command;
+    command.function = NULL;
+    command.bifunction = NULL;
+    command.time = 0;
+    command.param = 0;
 
     if (argc < 2) {
         printf("Usage: %s <command> [params]\n", argv[0]);
@@ -43,6 +52,15 @@ struct CommandMap executeCMDArgs(int argc, char **argv) {
             //command.units = atoi(argv[3]);
         }
 
+    }else if(strcmp(argv[1], "add") == 0){
+        if(argc == 2){
+            command.function = NULL;
+            return command;
+        }else if(argc == 3){
+            command.bifunction = add; 
+            command.param = argv[2];
+            command.time = 30 ;
+        }
     }
 
     return command;
@@ -59,4 +77,8 @@ void startstudy(double time) {
     startTimer(time);
     startTimer(DEFAULT_BREAK);
     startTimer(time);
+}
+
+void add(char *name, double time){
+    add_project(name,time);
 }
