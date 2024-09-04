@@ -7,7 +7,7 @@ struct CommandMap{
     double time;
     char* param;
 };
-void executeCMD(struct CommandMap cmd);
+int executeCMD(struct CommandMap cmd);
 struct CommandMap executeCMDArgs(int argc, char **args);
 void start(double time);
 void startbreak(double time);

@@ -16,9 +16,13 @@ leader rm PROJECTNAME
 
 leader list --> Show projects and the spend time inside of it
 
+Project saving
+    - PROJECTNAME TIME
+    - Operations remove(), add()
+    - differentiation between add time onto existing project 
+    and adding a new project
+    should be called add and update
+    - inside save.c load(), save() Projectfile
 
-Project should contain:
-    When initialise the project?
-        on startup or on first time usage?
-    Name = "Project.txt" (CSV later on)
-    Time spent in the project
+Todo:
++ Refactor save.c

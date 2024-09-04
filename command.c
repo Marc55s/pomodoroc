@@ -1,16 +1,20 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 #include "command.h"
 #include "save.h"
 #include "timer.h"
 
-void executeCMD(struct CommandMap cmd) {
+int executeCMD(struct CommandMap cmd) {
     if(cmd.function != NULL){
         cmd.function(cmd.time);
-    }else{
+    }else if(cmd.bifunction != NULL){
         cmd.bifunction(cmd.param,cmd.time);
+    }else{
+        return -1;
     }
+    return EXIT_SUCCESS;
 }
 
 struct CommandMap executeCMDArgs(int argc, char **argv) {
@@ -27,7 +31,6 @@ struct CommandMap executeCMDArgs(int argc, char **argv) {
 
     if (argc < 2) {
         printf("Usage: %s <command> [params]\n", argv[0]);
-        command.function = NULL;
         return command;
     }
 
@@ -61,6 +64,8 @@ struct CommandMap executeCMDArgs(int argc, char **argv) {
             command.param = argv[2];
             command.time = 30 ;
         }
+    } else if(strcmp(argv[1], "list") == 0){
+
     }
 
     return command;
@@ -80,5 +85,9 @@ void startstudy(double time) {
 }
 
 void add(char *name, double time){
-    add_project(name,time);
+    struct project proj;
+    strcpy(proj.name, name);
+    proj.time = time;
+    save_project(proj);
 }
+
