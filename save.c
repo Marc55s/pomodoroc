@@ -4,10 +4,11 @@
 #include <string.h>
 #include "save.h"
 #define SPLIT_TOK " " 
+#define MAX_PROJECTS 100
 
 const char *FILENAME = "project.txt";
 
-struct project loaded[100];
+struct project loaded[MAX_PROJECTS];
 
 void print_project(struct project proj);
 
@@ -93,8 +94,12 @@ void print_project(struct project proj){
     printf("name=%s time=%lf\n",proj.name,proj.time);
 }
 
-void update_project(){
-    
+void update_project(struct project proj){
+    for(int i = 0;i<MAX_PROJECTS;i++){
+        if(strcmp(loaded[i].name,proj.name) != 0){
+             
+        }
+    }
 }
 
 void remove_project(){

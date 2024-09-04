@@ -3,6 +3,7 @@
 #include <windows.h>
 #include "command.h"
 #include "save.h"
+#include "timer.h"
 
 int simulateargs(int argc, char **argv){
     argv[1] = "add";
@@ -22,10 +23,6 @@ int simulateargs(int argc, char **argv){
 int main(int argc, char **argv) {
     // Check if there are enough arguments
     printf("Welcome to Pomodoroc!\n");
-    load_projects();
-    list_projects();
-
-    
-
+    startstopwatch();
     return EXIT_SUCCESS;
 }

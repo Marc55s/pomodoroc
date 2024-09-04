@@ -46,9 +46,8 @@ struct CommandMap executeCMDArgs(int argc, char **argv) {
                 command.function = startstudy;
                 command.time = DEFAULT_STUDY; // Default study time is 25 minutes
             } else {
-                // Parse time if provided
-                command.function = start;
-                command.time = atoi(argv[2]);
+                //Project case
+                command.function = startproject;
             }
         } else if (argc == 4 && strcmp(argv[2], "study") == 0) {
             command.function = startstudy;
@@ -89,5 +88,12 @@ void add(char *name, double time){
     strcpy(proj.name, name);
     proj.time = time;
     save_project(proj);
+}
+
+void startproject(){
+    //start stop watch
+    //create if not existent
+    // otherwise update saved time
+    double time_spend = startstopwatch();
 }
 

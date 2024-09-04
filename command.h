@@ -13,3 +13,4 @@ void start(double time);
 void startbreak(double time);
 void startstudy(double time);
 void add(char *name, double time);
+void startproject();
