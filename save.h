@@ -7,3 +7,5 @@ struct project {
 int save_project(struct project proj);
 int load_projects();
 void list_projects();
+int update_project(struct project proj);
+void add_project(char *name);

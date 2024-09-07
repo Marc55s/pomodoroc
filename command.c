@@ -9,9 +9,9 @@
 int executeCMD(struct CommandMap cmd) {
     if(cmd.function != NULL){
         cmd.function(cmd.time);
-    }else if(cmd.bifunction != NULL){
-        cmd.bifunction(cmd.param,cmd.time);
-    }else{
+    }else if(cmd.charfunction != NULL){
+        cmd.charfunction(cmd.param);
+    }else {
         return -1;
     }
     return EXIT_SUCCESS;
@@ -25,7 +25,7 @@ struct CommandMap executeCMDArgs(int argc, char **argv) {
     }
     struct CommandMap command;
     command.function = NULL;
-    command.bifunction = NULL;
+    command.charfunction = NULL;
     command.time = 0;
     command.param = 0;
 
@@ -47,7 +47,8 @@ struct CommandMap executeCMDArgs(int argc, char **argv) {
                 command.time = DEFAULT_STUDY; // Default study time is 25 minutes
             } else {
                 //Project case
-                command.function = startproject;
+                command.charfunction = startproject;
+                command.param = argv[2];
             }
         } else if (argc == 4 && strcmp(argv[2], "study") == 0) {
             command.function = startstudy;
@@ -55,17 +56,18 @@ struct CommandMap executeCMDArgs(int argc, char **argv) {
         }
 
     }else if(strcmp(argv[1], "add") == 0){
-        if(argc == 2){
-            command.function = NULL;
-            return command;
-        }else if(argc == 3){
-            command.bifunction = add; 
-            command.param = argv[2];
-            command.time = 30 ;
+        if(argc == 3){
+            command.charfunction = add; 
+            command.param= argv[2];
         }
     } else if(strcmp(argv[1], "list") == 0){
+        command.function = listprojects;
+    }else if(strcmp(argv[1], "help") == 0){
+        printf("Usage: %s <command> [params]\n", argv[0]);
+        printf("commands:\nstart [study,break,PROJECT(can be any name)]\nlist\nadd [PROJECT]\nhelp\n");
 
     }
+
 
     return command;
 }
@@ -83,17 +85,23 @@ void startstudy(double time) {
     startTimer(time);
 }
 
-void add(char *name, double time){
-    struct project proj;
-    strcpy(proj.name, name);
-    proj.time = time;
-    save_project(proj);
+void add(char *name){
+    add_project(name);
 }
 
-void startproject(){
+void startproject(char *proj_name){
     //start stop watch
     //create if not existent
     // otherwise update saved time
-    double time_spend = startstopwatch();
+    double time_spend = 0;
+    startstopwatch(&time_spend);
+    struct project p;
+    strcpy(p.name, proj_name);
+    p.time = time_spend;
+    update_project(p);
+}
+
+void listprojects(){
+    list_projects();
 }
 

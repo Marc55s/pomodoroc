@@ -2,18 +2,18 @@
 
 TIME = minutes (also later on min:sec)
 
-- leader start --> starts default sessions with 25min
-- leader start break (TIME) --> start 5 min break
-- leader start study (TIME) --> start 25-5-25
-- leader start PROJECTNAME --> create Project to log time into
+- [ ] leader start --> starts default sessions with 25min
+- [x] leader start break (TIME) --> start 5 min break
+- [x] leader start study (TIME) --> start 25-5-25
+- [x] leader start PROJECTNAME --> create Project to log time into
 ---
-- leader set break TIME 
-- leader set study TIME
+- [ ] leader set break TIME 
+- [ ] leader set study TIME
 ---
-- leader add PROJECTNAME
-- leader rm PROJECTNAME
+- [x] leader add PROJECTNAME
+- [ ] leader rm PROJECTNAME
 
-- leader list --> Show projects and the spend time inside of it
+- [x] leader list --> Show projects and the spend time inside of it
 
 ## Project saving
 - data saved inside project.txt
@@ -26,3 +26,7 @@ TIME = minutes (also later on min:sec)
 > Split up project operation and operations inside file  
 > save.c should contain load() and save()  
 > project.c should contain remove(), update(), add()
+
+## Safety concerns
+- formatting while list projects
+- Saving projects with the same name

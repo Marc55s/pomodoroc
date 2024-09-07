@@ -3,4 +3,4 @@
 
 char* getCurrentTime();
 void startTimer(double minutes);
-double startstopwatch();
+void startstopwatch(double *elapsed_minutes);

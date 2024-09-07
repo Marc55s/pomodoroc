@@ -5,24 +5,30 @@
 #include "save.h"
 #include "timer.h"
 
+#define debug 0
+
 int simulateargs(int argc, char **argv){
-    argv[1] = "add";
-    argc++;
-    argv[2] = "myproject";
+    if(debug){
+        argv[1] = "add";
+        argc++;
+        argv[2] = "TTTT";
+        argc++;
+
+    }
     
-    argc++;
     // Execute the command
     struct CommandMap result = executeCMDArgs(argc,argv);
     printf("~ parsing args completed\n");
-    if(executeCMD(result) != 0)
+    if(executeCMD(result) != 0){
+        printf("~ exec failed");
         return EXIT_FAILURE;
+    }
     printf("~ executeCMD completed\n");
     return EXIT_SUCCESS;
 }
 
 int main(int argc, char **argv) {
-    // Check if there are enough arguments
     printf("Welcome to Pomodoroc!\n");
-    startstopwatch();
+    simulateargs(argc, argv);
     return EXIT_SUCCESS;
 }

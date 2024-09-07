@@ -58,7 +58,7 @@ void startTimer(double minutes) {
 * stopwatch can be stopped with a certain keystroke
 */
 
-double startstopwatch(){
+void startstopwatch(double *elapsed_minutes){
    // Variables to store start, end time and the elapsed time
     clock_t start, end;
     double elapsed;
@@ -67,37 +67,33 @@ double startstopwatch(){
 
     // Get the current clock time and store it as the start time
     start = clock();
-    int pause = 0;
 
     // Prompt the user to stop the stopwatch
     while(1){
-        if(kbhit()){
-            if(getch() == ' '){
-                //pause
-                pause =!pause;
+        if(_kbhit()){
+            int c = _getch();
+            if(c == ' '){
+
+            }else if(c == 's'){
+                break;
             }
         }
-        if(pause){
-
-            elapsed = ((double)(clock() - start)) / CLOCKS_PER_SEC;
-            // Calculate minutes and seconds
-            minutes = (int)elapsed / 60;
-            seconds = (int)elapsed % 60;
-        }
-
+        elapsed = ((double)(clock() - start)) / CLOCKS_PER_SEC;
+        // Calculate minutes and seconds
+        minutes = (int)elapsed / 60;
+        seconds = (int)elapsed % 60;
         // Display the elapsed time in minutes and seconds
         printf("\rElapsed time: %02d:%02d", minutes, seconds);
         fflush(stdout);
-        Sleep(3);
+        Sleep(100);
     }
 
-    // Get the current clock time and store it as the end time
     end = clock();
 
     // Calculate the elapsed time in seconds
-    elapsed = ((double)(end - start)) / CLOCKS_PER_SEC / 60.0;
+    elapsed = ((double)(end - start)) / CLOCKS_PER_SEC;
+    *elapsed_minutes = elapsed / 60;
 
     // Display the elapsed time
-    printf("\nElapsed time: %.3f seconds\n", elapsed);
-    return 0;
+    printf("\nElapsed time: %.3f minutes\n", *elapsed_minutes);
 }
