@@ -2,7 +2,7 @@
 
 TIME = minutes (also later on min:sec)
 
-- [ ] leader start --> starts default sessions with 25min
+- [x] leader start --> starts default sessions with 25min
 - [x] leader start break (TIME) --> start 5 min break
 - [x] leader start study (TIME) --> start 25-5-25
 - [x] leader start PROJECTNAME --> create Project to log time into
@@ -27,6 +27,8 @@ TIME = minutes (also later on min:sec)
 > save.c should contain load() and save()  
 > project.c should contain remove(), update(), add()
 
-## Safety concerns
+## Safety concerns/Bugs
 - formatting while list projects
 - Saving projects with the same name
+- Saving/Overriding and listing is not saving everything
+
