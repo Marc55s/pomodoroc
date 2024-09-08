@@ -9,3 +9,6 @@ int load_projects();
 void list_projects();
 int update_project(struct project proj);
 void add_project(char *name);
+void save_loaded();
+#define SPLIT_TOK " " 
+#define MAX_PROJECTS 100

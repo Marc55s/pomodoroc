@@ -4,22 +4,22 @@
 #include "command.h"
 #include "save.h"
 #include "timer.h"
+#include "project.h"
 
 #define debug 0
 
-int simulateargs(int argc, char **argv){
-    if(debug){
+int simulateargs(int argc, char **argv) {
+    if (debug) {
         argv[1] = "add";
         argc++;
-        argv[2] = "TTTT";
+        argv[2] = "BBBB";
         argc++;
-
     }
-    
+
     // Execute the command
-    struct CommandMap result = executeCMDArgs(argc,argv);
+    struct CommandMap result = executeCMDArgs(argc, argv);
     printf("~ parsing args completed\n");
-    if(executeCMD(result) != 0){
+    if (executeCMD(result) != 0) {
         printf("~ exec failed");
         return EXIT_FAILURE;
     }
