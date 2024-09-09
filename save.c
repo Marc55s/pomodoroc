@@ -17,15 +17,7 @@ void save_loaded(){
 }
 
 int save_override(struct project proj){
-    FILE *file;
-    errno_t err;
-
-    err = fopen_s(&file, FILENAME, "w");
-    if (err != 0) {
-        // Handle error, err contains the error code
-        perror("fopen_s");
-        return -1;
-    }
+    FILE *file = fopen(FILENAME, "w");
 
     // convert long into string
     int maxdigits = 4 * sizeof(double);
@@ -57,15 +49,7 @@ int save_override(struct project proj){
 }
 
 int save_project(struct project proj){
-    FILE *file;
-    errno_t err;
-
-    err = fopen_s(&file, FILENAME, "a+");
-    if (err != 0) {
-        // Handle error, err contains the error code
-        perror("fopen_s");
-        return -1;
-    }
+    FILE *file = fopen(FILENAME, "a+");
 
     // convert long into string
     int maxdigits = 4 * sizeof(double);
@@ -97,15 +81,7 @@ int save_project(struct project proj){
 }
 
 int load_projects(){
-    FILE *file;
-    errno_t err;
-
-    err = fopen_s(&file, FILENAME, "a+");
-    if (err != 0) {
-        // Handle error, err contains the error code
-        perror("fopen_s");
-        return -1;
-    }
+    FILE *file = fopen(FILENAME, "a+");
     char buf[1024];
     int count = 0;
 
@@ -129,5 +105,3 @@ int load_projects(){
 
     return 0;
 }
-
-

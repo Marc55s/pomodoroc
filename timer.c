@@ -2,8 +2,16 @@
 #include <stdio.h>
 #include <string.h>
 #include <time.h>
-#include <windows.h>
-#include <conio.h>
+
+#ifdef _WIN32
+    #include <windows.h>
+    #include <conio.h>
+#else
+    #include <sys/time.h>
+    #include <unistd.h>
+    #include <termios.h>
+    #include <fcntl.h>
+#endif
 
 char* getCurrentTime() {
     time_t now = time(0);
@@ -12,88 +20,116 @@ char* getCurrentTime() {
     return time_str;
 }
 
+#ifdef _WIN32
+    void sleep_ms(int milliseconds) {
+        Sleep(milliseconds);
+    }
+#else
+    void sleep_ms(int milliseconds) {
+        usleep(milliseconds * 1000);
+    }
+#endif
+
+#ifdef _WIN32
+    unsigned long getTickCount() {
+        return GetTickCount64();
+    }
+#else
+    unsigned long getTickCount() {
+        struct timeval time;
+        gettimeofday(&time, NULL);
+        return (time.tv_sec * 1000) + (time.tv_usec / 1000);
+    }
+#endif
+
+#ifdef _WIN32
+    int kbhit_linux() {
+        return kbhit();
+    }
+#else
+    int kbhit_linux() {
+        struct termios oldt, newt;
+        int ch;
+        int oldf;
+
+        tcgetattr(STDIN_FILENO, &oldt);
+        newt = oldt;
+        newt.c_lflag &= ~(ICANON | ECHO);
+        tcsetattr(STDIN_FILENO, TCSANOW, &newt);
+        oldf = fcntl(STDIN_FILENO, F_GETFL, 0);
+        fcntl(STDIN_FILENO, F_SETFL, oldf | O_NONBLOCK);
+
+        ch = getchar();
+
+        tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
+        fcntl(STDIN_FILENO, F_SETFL, oldf);
+
+        if(ch != EOF) {
+            ungetc(ch, stdin);
+            return 1;
+        }
+
+        return 0;
+    }
+#endif
+
 void startTimer(double minutes) {
     // Convert minutes to milliseconds
     unsigned long total_milliseconds = minutes * 60 * 1000;
-    // Get the initial start time
-    unsigned long start_time = GetTickCount64();
+    unsigned long start_time = getTickCount();
 
-    // Loop until total_milliseconds is reduced to 0
     while (total_milliseconds > 0) {
-        // Get the current tick count
-        unsigned long current_time = GetTickCount64();
-
-        // Calculate elapsed time since the last iteration
+        unsigned long current_time = getTickCount();
         unsigned long elapsed_time = current_time - start_time;
-
-        // Update start_time for the next iteration
         start_time = current_time;
 
-        // Decrease the total_milliseconds by the elapsed time
         total_milliseconds = (total_milliseconds > elapsed_time)
             ? total_milliseconds - elapsed_time
             : 0;
 
-        // Calculate minutes and seconds left
         unsigned long mins_left = total_milliseconds / (60 * 1000);
         unsigned long secs_left = (total_milliseconds % (60 * 1000)) / 1000;
-        // Print remaining time
+
         printf("\rTime remaining: %02lu:%02lu", mins_left, secs_left);
         fflush(stdout);
-        // Sleep for 1 second
-        // Check if there's time left to sleep
+
         if (total_milliseconds > 100) {
-            Sleep(100);  // Sleep for 100 milliseconds to reduce CPU usage
+            sleep_ms(100);
         } else {
-            // Sleep only for the remaining time if less than 100 milliseconds
-            Sleep(total_milliseconds);
+            sleep_ms(total_milliseconds);
         }
     }
 }
 
-/*
-* Functionality of startstopwatch
-* stopwatch is starting to count when called
-* stopwatch can be pause with a keystroke
-* stopwatch can be stopped with a certain keystroke
-*/
-
-void startstopwatch(double *elapsed_minutes){
-   // Variables to store start, end time and the elapsed time
+void startstopwatch(double *elapsed_time) {
     clock_t start, end;
     double elapsed;
-    int minutes, seconds;
+    int minutes = 0, seconds = 0;
+    int pause = 0;
 
-
-    // Get the current clock time and store it as the start time
     start = clock();
 
-    // Prompt the user to stop the stopwatch
-    while(1){
-        if(_kbhit()){
-            int c = _getch();
-            if(c == ' '){
-
-            }else if(c == 's'){
-                break;
+    while (1) {
+        if (kbhit_linux()) {
+            if (getchar() == ' ') {
+                pause = !pause;
             }
         }
-        elapsed = ((double)(clock() - start)) / CLOCKS_PER_SEC;
-        // Calculate minutes and seconds
-        minutes = (int)elapsed / 60;
-        seconds = (int)elapsed % 60;
-        // Display the elapsed time in minutes and seconds
-        printf("\rElapsed time: %02d:%02d", minutes, seconds);
-        fflush(stdout);
-        Sleep(100);
+
+        if (!pause) {
+            elapsed = ((double)(clock() - start)) / CLOCKS_PER_SEC;
+            minutes = (int)elapsed / 60;
+            seconds = (int)elapsed % 60;
+
+            printf("\rElapsed time: %02d:%02d", minutes, seconds);
+            fflush(stdout);
+        }
+
+        sleep_ms(3);
     }
 
     end = clock();
-
-    // Calculate the elapsed time in seconds
-    elapsed = ((double)(end - start)) / CLOCKS_PER_SEC;
-    *elapsed_minutes = elapsed / 60;
-
-    // Display the elapsed time
-    printf("\nElapsed time: %.3f minutes\n", *elapsed_minutes);
+    elapsed = ((double)(end - start)) / CLOCKS_PER_SEC / 60.0;
+    printf("\nElapsed time: %.3f seconds\n", elapsed);
 }
+
