@@ -15,3 +15,4 @@ void startstudy(double time);
 void add(char *name);
 void startproject(char *proj_name);
 void listprojects();
+void remove_proj(char *name);

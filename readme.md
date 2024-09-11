@@ -11,7 +11,7 @@ TIME = minutes (also later on min:sec)
 - [ ] leader set study TIME
 ---
 - [x] leader add PROJECTNAME
-- [ ] leader rm PROJECTNAME
+- [x] leader rm PROJECTNAME
 
 - [x] leader list --> Show projects and the spend time inside of it
 
@@ -26,6 +26,9 @@ TIME = minutes (also later on min:sec)
 > Split up project operation and operations inside file  
 > save.c should contain load() and save()  
 > project.c should contain remove(), update(), add()
+
+### Future ideas
+- Track editing time of files inside a coding project
 
 ## Safety concerns/Bugs
 - formatting while list projects

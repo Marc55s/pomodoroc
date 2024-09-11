@@ -2,9 +2,11 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
+#include <unistd.h>
 #include "command.h"
 #include "save.h"
 #include "timer.h"
+#include "project.h"
 
 int executeCMD(struct CommandMap cmd) {
     if(cmd.function != NULL){
@@ -66,9 +68,10 @@ struct CommandMap executeCMDArgs(int argc, char **argv) {
         printf("Usage: %s <command> [params]\n", argv[0]);
         printf("commands:\nstart [study,break,PROJECT(can be any name)]\nlist\nadd [PROJECT]\nhelp\n");
 
+    }else if(strcmp(argv[1], "rm") == 0){
+        command.charfunction = remove_proj;
+        command.param = argv[2];
     }
-
-
     return command;
 }
 
@@ -85,9 +88,6 @@ void startstudy(double time) {
     startTimer(time);
 }
 
-void add(char *name){
-    add_project(name);
-}
 
 void startproject(char *proj_name){
     //start stop watch
@@ -101,7 +101,16 @@ void startproject(char *proj_name){
     update_project(p);
 }
 
+void add(char *name){
+    add_project(name);
+}
+
 void listprojects(){
     list_projects();
 }
 
+void remove_proj(char *name){
+    struct project temp;
+    strcpy(temp.name, name);
+    remove_project(temp);
+}

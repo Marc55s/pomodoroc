@@ -5,13 +5,13 @@
 #include "timer.h"
 #include "project.h"
 
-#define debug 0
+#define debug 1
 
 int simulateargs(int argc, char **argv) {
     if (debug) {
-        argv[1] = "add";
+        argv[1] = "rm";
         argc++;
-        argv[2] = "BBBB";
+        argv[2] = "aZZ";
         argc++;
     }
 
