@@ -7,7 +7,8 @@ extern struct project loaded[MAX_PROJECTS];
 
 void list_projects(){
     load_projects();
-    printf("|projects(%d) |time\n",MAX_PROJECTS);
+    //get longest project name
+    printf("|projects   |time\n");
     for(int i = 0;i<MAX_PROJECTS;i++){
         if(strcmp(loaded[i].name,"")!=0){
             printf("----------------------\n");
@@ -40,11 +41,9 @@ int update_project(struct project proj){
     }
     load_projects();
     for(int i = 0;i<MAX_PROJECTS;i++){
-        printf("%s %s =%d\n",loaded[i].name,proj.name,strcmp(loaded[i].name,proj.name));
         if(strcmp(loaded[i].name,proj.name) == 0){
             loaded[i].time += proj.time;
             strcpy(loaded[i].name, proj.name);
-            //save_project(loaded[i]); //TODO change
             save_loaded();
             return 1;
         }  
@@ -69,7 +68,7 @@ void remove_project(struct project proj){
             }
         }
     }
-    printf("~ Project does not exist\n");
+    printf("[INFO] Project does not exist\n");
 }
 
 void add_project(char *name){

@@ -1,8 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <time.h>
-#include <unistd.h>
 #include "command.h"
 #include "save.h"
 #include "timer.h"
@@ -20,10 +18,10 @@ int executeCMD(struct CommandMap cmd) {
 }
 
 struct CommandMap executeCMDArgs(int argc, char **argv) {
-    printf("~ parsing args...\n");
-    printf("~ argc = %d\n", argc);
+    printf("[INFO] parsing args...\n");
+    printf("[INFO] argc = %d\n", argc);
     for (int i = 1; i < argc; i++) {
-        printf("~ argv[%d] = %s\n", i, argv[i]);
+        printf("[INFO] argv[%d] = %s\n", i, argv[i]);
     }
     struct CommandMap command;
     command.function = NULL;
@@ -88,17 +86,16 @@ void startstudy(double time) {
     startTimer(time);
 }
 
-
 void startproject(char *proj_name){
     //start stop watch
     //create if not existent
     // otherwise update saved time
     double time_spend = 0;
     startstopwatch(&time_spend);
-    struct project p;
-    strcpy(p.name, proj_name);
-    p.time = time_spend;
-    update_project(p);
+    struct project temp;
+    strcpy(temp.name, proj_name);
+    temp.time = time_spend;
+    update_project(temp);
 }
 
 void add(char *name){

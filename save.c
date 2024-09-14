@@ -33,7 +33,7 @@ int save_project(struct project proj){
     strcat(in, str);
     strcat(in, "\n");
 
-    printf("~ saving %s", in);
+    printf("[INFO] saving %s", in);
 
     // Write to the file
     if (fputs(in, file) == EOF) {

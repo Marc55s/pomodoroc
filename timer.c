@@ -1,17 +1,6 @@
 #include "timer.h"
-#include <stdio.h>
-#include <string.h>
-#include <time.h>
+#include "platformtime.h"
 
-#ifdef _WIN32
-    #include <windows.h>
-    #include <conio.h>
-#else
-    #include <sys/time.h>
-    #include <unistd.h>
-    #include <termios.h>
-    #include <fcntl.h>
-#endif
 
 char* getCurrentTime() {
     time_t now = time(0);
@@ -19,60 +8,6 @@ char* getCurrentTime() {
     time_str[strlen(time_str) - 1] = '\0'; // Remove the newline character
     return time_str;
 }
-
-#ifdef _WIN32
-    void sleep_ms(int milliseconds) {
-        Sleep(milliseconds);
-    }
-#else
-    void sleep_ms(int milliseconds) {
-        usleep(milliseconds * 1000);
-    }
-#endif
-
-#ifdef _WIN32
-    unsigned long getTickCount() {
-        return GetTickCount64();
-    }
-#else
-    unsigned long getTickCount() {
-        struct timeval time;
-        gettimeofday(&time, NULL);
-        return (time.tv_sec * 1000) + (time.tv_usec / 1000);
-    }
-#endif
-
-#ifdef _WIN32
-    int kbhit_linux() {
-        return kbhit();
-    }
-#else
-    int kbhit_linux() {
-        struct termios oldt, newt;
-        int ch;
-        int oldf;
-
-        tcgetattr(STDIN_FILENO, &oldt);
-        newt = oldt;
-        newt.c_lflag &= ~(ICANON | ECHO);
-        tcsetattr(STDIN_FILENO, TCSANOW, &newt);
-        oldf = fcntl(STDIN_FILENO, F_GETFL, 0);
-        fcntl(STDIN_FILENO, F_SETFL, oldf | O_NONBLOCK);
-
-        ch = getchar();
-
-        tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
-        fcntl(STDIN_FILENO, F_SETFL, oldf);
-
-        if(ch != EOF) {
-            ungetc(ch, stdin);
-            return 1;
-        }
-
-        return 0;
-    }
-#endif
-
 void startTimer(double minutes) {
     // Convert minutes to milliseconds
     unsigned long total_milliseconds = minutes * 60 * 1000;
@@ -100,36 +35,59 @@ void startTimer(double minutes) {
         }
     }
 }
-
 void startstopwatch(double *elapsed_time) {
-    clock_t start, end;
-    double elapsed;
+    struct timeval start, end, pause_start;
+    double total_elapsed = 0.0;
+    double current_elapsed = 0.0;
+    double paused_time = 0.0;
     int minutes = 0, seconds = 0;
     int pause = 0;
+    int ch;
 
-    start = clock();
+    gettimeofday(&start, NULL);
 
     while (1) {
         if (kbhit_linux()) {
-            if (getchar() == ' ') {
-                pause = !pause;
+            ch = getchar();
+            if (ch == ' ') {
+                if (pause) {
+                    // Resuming from pause
+                    gettimeofday(&pause_start, NULL);
+                    paused_time += (pause_start.tv_sec - start.tv_sec) + (pause_start.tv_usec - start.tv_usec) / 1000000.0;
+                    start = pause_start; // Reset start time to the resume time
+                    pause = 0;
+                } else {
+                    // Pausing
+                    gettimeofday(&pause_start, NULL);
+                    total_elapsed += (pause_start.tv_sec - start.tv_sec) + (pause_start.tv_usec - start.tv_usec) / 1000000.0;
+                    pause = 1;
+                }
+            } else if (ch == 's') {
+                break;
             }
         }
 
         if (!pause) {
-            elapsed = ((double)(clock() - start)) / CLOCKS_PER_SEC;
-            minutes = (int)elapsed / 60;
-            seconds = (int)elapsed % 60;
+            gettimeofday(&end, NULL);
+            current_elapsed = (end.tv_sec - start.tv_sec) + (end.tv_usec - start.tv_usec) / 1000000.0;
+            minutes = (int)(total_elapsed + current_elapsed) / 60;
+            seconds = (int)(total_elapsed + current_elapsed) % 60;
 
             printf("\rElapsed time: %02d:%02d", minutes, seconds);
             fflush(stdout);
         }
 
-        sleep_ms(3);
+        sleep_ms(100);  // Sleep for 100 milliseconds for smoother output
     }
 
-    end = clock();
-    elapsed = ((double)(end - start)) / CLOCKS_PER_SEC / 60.0;
-    printf("\nElapsed time: %.3f seconds\n", elapsed);
+    // Add the final elapsed time to account for any remaining time
+    if (!pause) {
+        gettimeofday(&end, NULL);
+        total_elapsed += (end.tv_sec - start.tv_sec) + (end.tv_usec - start.tv_usec) / 1000000.0;
+    }
+
+    *elapsed_time = total_elapsed / 60;
+
+    printf("\nTotal elapsed time: %.3f seconds\n", total_elapsed);
 }
 

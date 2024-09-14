@@ -5,7 +5,8 @@
 #include "timer.h"
 #include "project.h"
 
-#define debug 1
+#define debug 0
+
 
 int simulateargs(int argc, char **argv) {
     if (debug) {
@@ -17,12 +18,12 @@ int simulateargs(int argc, char **argv) {
 
     // Execute the command
     struct CommandMap result = executeCMDArgs(argc, argv);
-    printf("~ parsing args completed\n");
+    printf("[INFO] parsing args completed\n");
     if (executeCMD(result) != 0) {
-        printf("~ exec failed");
+        printf("[INFO] exec failed");
         return EXIT_FAILURE;
     }
-    printf("~ executeCMD completed\n");
+    printf("[INFO] executeCMD completed\n");
     return EXIT_SUCCESS;
 }
 
