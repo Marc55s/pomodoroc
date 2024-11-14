@@ -54,21 +54,21 @@ int update_project(struct project proj){
 
 void remove_project(struct project proj){
     load_projects();
-    if(project_exists(proj) != 0){
-
-        for(int i = 0;i<MAX_PROJECTS;i++){
-            if(strcmp(loaded[i].name,proj.name) == 0){
-                //remove item at it and shift i + j items -1 
-                for(int j = i;j<MAX_PROJECTS-1;j++){
-                    strcpy(loaded[j].name,loaded[j+1].name);
-                    loaded[j].time = loaded[j+1].time;
-                }
-                save_loaded();
-                return;
+    if (project_exists(proj) == 0) {
+        printf("[INFO] Project does not exist\n");
+        return;
+    }
+    for(int i = 0;i<MAX_PROJECTS;i++){
+        if(strcmp(loaded[i].name,proj.name) == 0){
+            //remove item at it and shift i + j items -1 
+            for(int j = i;j<MAX_PROJECTS-1;j++){
+                strcpy(loaded[j].name,loaded[j+1].name);
+                loaded[j].time = loaded[j+1].time;
             }
+            save_loaded();
+            return;
         }
     }
-    printf("[INFO] Project does not exist\n");
 }
 
 void add_project(char *name){
